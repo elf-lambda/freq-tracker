@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/pol/ Activity Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Frequency Monitor</h1>
+
+    <div class="stats" id="stats">
+        <div class="stat-card">
+            <div class="stat-value" id="current-threads">-</div>
+            <div class="stat-label">New Threads (Last Min)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="current-replies">-</div>
+            <div class="stat-label">New Replies (Last Min)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="current-images">-</div>
+            <div class="stat-label">New Images (Last Min)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="total-data">-</div>
+            <div class="stat-label">Data Points</div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-container">
+            <h2>Thread Activity</h2>
+            <canvas id="threadsChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2>Reply Activity</h2>
+            <canvas id="repliesChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2>Image Activity</h2>
+            <canvas id="imagesChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

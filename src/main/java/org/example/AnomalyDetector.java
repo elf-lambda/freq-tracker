@@ -48,7 +48,7 @@ public class AnomalyDetector {
     double avgImages = baseline.stream().mapToInt(MetricSnapshot::totalImageIncrease).average().orElse(0);
 
     // Detect spikes
-    if (avgNewThreads > 0 && current.newThreads() > avgNewThreads * spikeThreshold && current.newThreads() >= 5) {
+    if (avgNewThreads > 0 && current.newThreads() > avgNewThreads * spikeThreshold && current.newThreads() >= 6) {
       triggerAnomaly(new AnomalyEvent(
               AnomalyType.SPIKE,
               "new_threads",

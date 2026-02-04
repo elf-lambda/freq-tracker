@@ -7,31 +7,35 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
-  public static void main(String[] args) {
-    Scraper scraper = new Scraper("pol", "https://a.4cdn.org/");
+public class Main
+{
+  public static void main(String[] args)
+  {
+    Scraper scraper = new Scraper("", "");
     FrequencyTracker tracker = new FrequencyTracker();
     MetricsLogger logger = new MetricsLogger("pol");
     logger.logHeader();
 
     AnomalyDetector detector = new AnomalyDetector(15, 2.0, 0.5);
 
-    // Initialize Discord webhook
-    DiscordWebhook webhook = new DiscordWebhook(
-            "https://discord.com/api/webhooks/1468403309948965011/QwEeTQKMHa4XtvwWPRP56y35rIaKMZ7843ic-4t6PjDC1-eAwumIxjYb2dhM2mk6SbgT"
-    );
+    // Start web dashboard on port 7070
+    WebDashboard dashboard = new WebDashboard(7070, 100);
 
-    // Set up anomaly handler
+
+    // Initialize Discord webhook
+    DiscordWebhook webhook = new DiscordWebhook("");
     detector.setAnomalyHandler(anomaly -> {
       System.err.println("🚨 ANOMALY DETECTED: " + anomaly);
-      try {
+      try
+      {
         // Simple message
         // webhook.sendMessage("**ANOMALY DETECTED**\n" + anomaly.toString());
 
         int color = anomaly.type() == AnomalyType.SPIKE ? 0xFF0000 : 0xFFA500;
         webhook.sendEmbed(
                 "🚨 Anomaly Detected: " + anomaly.type(),
-                String.format("**Metric:** %s\n**Current:** %.2f\n**Baseline:** %.2f\n**Change:** %.1f%%",
+                String.format(
+                        "**Metric:** %s\n**Current:** %.2f\n**Baseline:** %.2f\n**Change:** %.1f%%",
                         anomaly.metric(),
                         anomaly.currentValue(),
                         anomaly.baselineAverage(),
@@ -39,7 +43,8 @@ public class Main {
                 ),
                 color
         );
-      } catch (IOException e) {
+      } catch (IOException e)
+      {
         System.err.println("Failed to send Discord notification: " + e.getMessage());
       }
     });
@@ -48,7 +53,8 @@ public class Main {
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     scheduler.scheduleAtFixedRate(() -> {
-      try {
+      try
+      {
         List<Post> posts = scraper.fetchThreads();
         FrequencyStats stats = tracker.analyzeSnapshot(posts);
 
@@ -64,17 +70,22 @@ public class Main {
         logger.log(snapshot);
 
         // Skip first load
-        if (snapshot.newThreads() >= 200) {} else
+        if (snapshot.newThreads() >= 200)
+        {
+        } else
         {
           detector.addSnapshot(snapshot);
+          dashboard.addSnapshot(snapshot);
         }
 
-        // Print current stats
         System.out.println("[" + now + "] " + stats);
 
-      } catch (IOException e) {
+      } catch (IOException e)
+      {
         System.err.println("Error: " + e.getMessage());
       }
     }, 0, 60, TimeUnit.SECONDS);
+
+    System.out.println("Monitor started. Dashboard at http://localhost:7070");
   }
 }
